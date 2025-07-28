@@ -11,9 +11,7 @@ export class InMemoryCacheService implements ICacheService {
   async get<T>(key: string): Promise<T | null> {
     const item = this.cache.get(key);
 
-    if (!item) {
-      return null;
-    }
+    if (!item) return null;
 
     if (item.expiresAt && Date.now() > item.expiresAt) {
       this.cache.delete(key);
@@ -34,9 +32,7 @@ export class InMemoryCacheService implements ICacheService {
 
   async exists(key: string): Promise<boolean> {
     const item = this.cache.get(key);
-    if (!item) {
-      return false;
-    }
+    if (!item) return false;
 
     if (item.expiresAt && Date.now() > item.expiresAt) {
       this.cache.delete(key);

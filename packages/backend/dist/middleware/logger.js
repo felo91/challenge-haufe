@@ -11,10 +11,12 @@ const loggerMiddleware = (req, res, next) => {
         userAgent: req.get("User-Agent"),
         ip: req.ip || req.connection.remoteAddress,
         userId: req.user?.id || "anonymous",
-    }, "Incoming request");
+        requestId: req.headers["x-request-id"] || `req-${Date.now()}`,
+    }, `📥 ${req.method} ${req.url}`);
     const originalEnd = res.end;
     res.end = function (chunk, encoding) {
         const duration = Date.now() - (req.startTime || 0);
+        const statusEmoji = res.statusCode < 400 ? "✅" : res.statusCode < 500 ? "⚠️" : "❌";
         logger_1.logger.info({
             type: "response",
             method: req.method,
@@ -23,7 +25,8 @@ const loggerMiddleware = (req, res, next) => {
             duration: `${duration}ms`,
             contentLength: res.get("Content-Length") || 0,
             userId: req.user?.id || "anonymous",
-        }, "Request completed");
+            requestId: req.headers["x-request-id"] || `req-${Date.now()}`,
+        }, `${statusEmoji} ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`);
         return originalEnd.call(this, chunk, encoding);
     };
     next();

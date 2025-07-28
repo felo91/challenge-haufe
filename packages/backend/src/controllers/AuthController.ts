@@ -10,30 +10,14 @@ export class AuthController {
   }
 
   async register(req: Request, res: Response, _next: NextFunction): Promise<void> {
-    try {
-      const registerData: RegisterRequest = req.body;
-      const result = await this.authService.register(registerData);
-      res.status(201).json(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+    const registerData: RegisterRequest = req.body;
+    const result = await this.authService.register(registerData);
+    res.status(201).json(result);
   }
 
   async login(req: Request, res: Response, _next: NextFunction): Promise<void> {
-    try {
-      const loginData: LoginRequest = req.body;
-      const result = await this.authService.login(loginData);
-      res.status(200).json(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(401).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+    const loginData: LoginRequest = req.body;
+    const result = await this.authService.login(loginData);
+    res.status(200).json(result);
   }
 }

@@ -68,9 +68,7 @@ describe("AuthController", () => {
     givenValidRegisterRequest(registerData);
     givenAuthServiceThrowsError("User already exists");
 
-    await whenRegisterIsCalled();
-
-    thenErrorIsHandled(400, "User already exists");
+    await expect(whenRegisterIsCalled()).rejects.toThrow("User already exists");
   });
 
   it("should login user successfully", async (): Promise<void> => {
@@ -106,9 +104,7 @@ describe("AuthController", () => {
     givenValidLoginRequest(loginData);
     givenAuthServiceThrowsError("Invalid credentials");
 
-    await whenLoginIsCalled();
-
-    thenErrorIsHandled(401, "Invalid credentials");
+    await expect(whenLoginIsCalled()).rejects.toThrow("Invalid credentials");
   });
 
   // Given functions

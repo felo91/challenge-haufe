@@ -3,23 +3,22 @@ import { Request, Response, NextFunction } from "express";
 import { loggerMiddleware, LoggedRequest } from "./logger";
 
 // Mock the logger
-const mockLogger = {
-  info: vi.fn(),
-  error: vi.fn(),
-  debug: vi.fn(),
-  warn: vi.fn(),
-};
-
 vi.mock("../config/logger", () => ({
-  logger: mockLogger,
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+  },
 }));
 
 describe("LoggerMiddleware", () => {
   let mockRequest: Partial<LoggedRequest>;
   let mockResponse: Partial<Response>;
   let mockNext: NextFunction;
+  let mockLogger: any;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockRequest = {
       method: "GET",
       url: "/api/test",
@@ -28,6 +27,7 @@ describe("LoggerMiddleware", () => {
       connection: {
         remoteAddress: "127.0.0.1",
       } as any,
+      headers: {}, // Added for requestId
     };
 
     mockResponse = {
@@ -37,6 +37,11 @@ describe("LoggerMiddleware", () => {
     };
 
     mockNext = vi.fn() as any;
+
+    // Get the mocked logger
+    const loggerModule = await import("../config/logger");
+    mockLogger = loggerModule.logger;
+
     vi.clearAllMocks();
   });
 
@@ -124,7 +129,7 @@ describe("LoggerMiddleware", () => {
         userAgent: "test-user-agent",
         ip: "127.0.0.1",
       }),
-      "Incoming request"
+      "📥 GET /api/test"
     );
   }
 
@@ -137,7 +142,7 @@ describe("LoggerMiddleware", () => {
         statusCode: 200,
         contentLength: "1024",
       }),
-      "Request completed"
+      expect.stringMatching(/^✅ GET \/api\/test - 200 \(\d+ms\)$/)
     );
   }
 
@@ -146,7 +151,7 @@ describe("LoggerMiddleware", () => {
       expect.objectContaining({
         duration: expect.stringMatching(/^\d+ms$/),
       }),
-      "Request completed"
+      expect.stringMatching(/^✅ GET \/api\/test - 200 \(\d+ms\)$/)
     );
   }
 
@@ -155,7 +160,7 @@ describe("LoggerMiddleware", () => {
       expect.objectContaining({
         userId: "user-123",
       }),
-      "Incoming request"
+      "📥 GET /api/test"
     );
   }
 
@@ -164,7 +169,7 @@ describe("LoggerMiddleware", () => {
       expect.objectContaining({
         userId: "anonymous",
       }),
-      "Incoming request"
+      "📥 GET /api/test"
     );
   }
 

@@ -18,8 +18,9 @@ export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFu
       userAgent: req.get("User-Agent"),
       ip: req.ip || req.connection.remoteAddress,
       userId: (req as any).user?.id || "anonymous",
+      requestId: req.headers["x-request-id"] || `req-${Date.now()}`,
     },
-    "Incoming request"
+    `📥 ${req.method} ${req.url}`
   );
 
   // Override res.end to log the response
@@ -27,6 +28,7 @@ export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFu
   res.end = function (chunk?: any, encoding?: any): Response {
     const duration = Date.now() - (req.startTime || 0);
 
+    const statusEmoji = res.statusCode < 400 ? "✅" : res.statusCode < 500 ? "⚠️" : "❌";
     logger.info(
       {
         type: "response",
@@ -36,8 +38,9 @@ export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFu
         duration: `${duration}ms`,
         contentLength: res.get("Content-Length") || 0,
         userId: (req as any).user?.id || "anonymous",
+        requestId: req.headers["x-request-id"] || `req-${Date.now()}`,
       },
-      "Request completed"
+      `${statusEmoji} ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`
     );
 
     // Call the original end method

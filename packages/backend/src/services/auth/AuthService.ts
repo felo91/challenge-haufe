@@ -3,9 +3,10 @@ import * as jwt from "jsonwebtoken";
 import { User } from "../../entities/User";
 import { AppDataSource } from "../../config/database";
 import { RegisterRequest, LoginRequest, AuthResponse } from "@rick-morty-app/libs";
+import { InvalidCredentialsError, UserAlreadyExistsError } from "../../errors";
 
 export class AuthService {
-  private userRepository: Repository<User> | null;
+  private userRepository: Repository<User>;
 
   constructor() {
     try {
@@ -17,17 +18,9 @@ export class AuthService {
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    if (!this.userRepository) {
-      throw new Error("Database not available");
-    }
+    const existingUser = await this.userRepository.findOne({ where: { email: data.email } });
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email: data.email },
-    });
-
-    if (existingUser) {
-      throw new Error("User already exists");
-    }
+    if (existingUser) throw new UserAlreadyExistsError();
 
     const user = this.userRepository.create({
       email: data.email,
@@ -52,16 +45,10 @@ export class AuthService {
   }
 
   async login(data: LoginRequest): Promise<AuthResponse> {
-    if (!this.userRepository) {
-      throw new Error("Database not available");
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { email: data.email },
-    });
+    const user = await this.userRepository.findOne({ where: { email: data.email } });
 
     if (!user || !user.validatePassword(data.password)) {
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentialsError();
     }
 
     const token = this.generateToken(user);
@@ -78,16 +65,9 @@ export class AuthService {
   }
 
   async validateToken(token: string): Promise<User | null> {
-    if (!this.userRepository) {
-      return null;
-    }
-
     try {
       const decoded = jwt.verify(token, process.env["JWT_SECRET"] || "default-secret") as any;
-      const user = await this.userRepository.findOne({
-        where: { id: decoded.userId },
-      });
-      return user;
+      return await this.userRepository.findOne({ where: { id: decoded.userId } });
     } catch (error) {
       return null;
     }

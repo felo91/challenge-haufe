@@ -14,6 +14,7 @@ const database_1 = require("./config/database");
 const logger_1 = require("./config/logger");
 const routes_1 = __importDefault(require("./routes"));
 const logger_2 = require("./middleware/logger");
+const errorHandler_1 = require("./middleware/errorHandler");
 (0, dotenv_1.config)();
 const app = (0, express_1.default)();
 const PORT = process.env["PORT"] || 3001;
@@ -55,10 +56,7 @@ app.use("/api", routes_1.default);
 app.get("/health", (_req, res) => {
     res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
-app.use((err, _req, res, _next) => {
-    logger_1.logger.error({ error: err.message, stack: err.stack }, "Unhandled error");
-    res.status(500).json({ error: "Something went wrong!" });
-});
+app.use(errorHandler_1.errorHandler);
 app.use("*", (_req, res) => {
     res.status(404).json({ error: "Route not found" });
 });
@@ -66,12 +64,14 @@ async function startServer() {
     try {
         await (0, database_1.initializeDatabase)();
         app.listen(PORT, () => {
-            logger_1.logger.info(`🚀 Server running on port ${PORT}`);
-            logger_1.logger.info(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
+            logger_1.logger.info(`🚀 Server started successfully on port ${PORT}`);
+            logger_1.logger.info(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+            logger_1.logger.info(`🏥 Health Check: http://localhost:${PORT}/health`);
+            logger_1.logger.info(`🎯 Environment: ${process.env["NODE_ENV"] || "development"}`);
         });
     }
     catch (error) {
-        logger_1.logger.error({ error }, "Failed to start server");
+        logger_1.logger.error({ error }, "💥 Failed to start server");
         process.exit(1);
     }
 }

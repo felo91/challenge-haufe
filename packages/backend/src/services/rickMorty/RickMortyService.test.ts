@@ -55,7 +55,7 @@ describe("RickMortyService", () => {
     givenApiReturnsCharacters(mockResponse);
     givenCacheIsEmpty();
 
-    const result = await whenCharactersAreFetched();
+    const result = await whenCharactersAreFetched(1);
 
     thenCharactersAreReturned(result);
     thenCharactersAreCached();
@@ -95,7 +95,7 @@ describe("RickMortyService", () => {
 
     givenCharactersAreCached(cachedResponse);
 
-    const result = await whenCharactersAreFetched();
+    const result = await whenCharactersAreFetched(1);
 
     thenCharactersAreReturned(result);
     thenApiIsNotCalled();
@@ -164,8 +164,8 @@ describe("RickMortyService", () => {
   }
 
   // When functions
-  async function whenCharactersAreFetched(): Promise<CharacterListResponse> {
-    return rickMortyService.getCharacters();
+  async function whenCharactersAreFetched(page: number = 1): Promise<CharacterListResponse> {
+    return await rickMortyService.getCharacters({ page });
   }
 
   async function whenCharacterIsFetched(id: number): Promise<Character> {

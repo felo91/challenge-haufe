@@ -9,6 +9,7 @@ import { initializeDatabase } from "./config/database";
 import { logger } from "./config/logger";
 import routes from "./routes";
 import { loggerMiddleware } from "./middleware/logger";
+import { errorHandler } from "./middleware/errorHandler";
 
 // Load environment variables
 config();
@@ -68,10 +69,7 @@ app.get("/health", (_req, res) => {
 });
 
 // Error handling middleware
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error({ error: err.message, stack: err.stack }, "Unhandled error");
-  res.status(500).json({ error: "Something went wrong!" });
-});
+app.use(errorHandler);
 
 // 404 handler
 app.use("*", (_req, res) => {
@@ -85,11 +83,13 @@ async function startServer() {
     await initializeDatabase();
 
     app.listen(PORT, () => {
-      logger.info(`🚀 Server running on port ${PORT}`);
-      logger.info(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
+      logger.info(`🚀 Server started successfully on port ${PORT}`);
+      logger.info(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+      logger.info(`🏥 Health Check: http://localhost:${PORT}/health`);
+      logger.info(`🎯 Environment: ${process.env["NODE_ENV"] || "development"}`);
     });
   } catch (error) {
-    logger.error({ error }, "Failed to start server");
+    logger.error({ error }, "💥 Failed to start server");
     process.exit(1);
   }
 }

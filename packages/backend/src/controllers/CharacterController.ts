@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { RickMortyService } from "../services/rickMorty/RickMortyService";
 import { InMemoryCacheService } from "../services/cache/InMemoryCacheService";
 import { UserService } from "../services/user/UserService";
 import { AuthenticatedRequest } from "../middleware/auth";
-import { CharacterQuery, FavoriteCharacterRequest } from "@rick-morty-app/libs";
+import { FavoriteCharacterRequest } from "@rick-morty-app/libs";
+import { CharacterDto } from "../dto/CharacterDto";
+import { InvalidCharacterIdError, AuthenticationError } from "../errors";
 
 export class CharacterController {
   private rickMortyService: RickMortyService;
@@ -15,119 +17,42 @@ export class CharacterController {
     this.userService = new UserService();
   }
 
-  async getCharacters(
-    req: Request,
-    res: Response,
-    _next: NextFunction
-  ): Promise<void> {
-    try {
-      const query: CharacterQuery = req.query as any;
-      const characters = await this.rickMortyService.getCharacters(query);
-      res.status(200).json(characters);
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+  async getCharacters(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
+    const page = parseInt(req.query["page"] as string) || 1;
+    const characters = await this.rickMortyService.getCharacters({ page });
+
+    const basicCharacters = CharacterDto.toCharacterListWithFavorite(characters.results, characters.info, req.user);
+
+    res.status(200).json(basicCharacters);
   }
 
-  async getCharacter(
-    req: Request,
-    res: Response,
-    _next: NextFunction
-  ): Promise<void> {
-    try {
-      const id = parseInt(req.params["id"] || "");
-      if (isNaN(id)) {
-        res.status(400).json({ error: "Invalid character ID" });
-        return;
-      }
+  async getAdditionalInfoById(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
+    const id = parseInt(req.params["id"] || "");
+    if (isNaN(id)) throw new InvalidCharacterIdError();
 
-      const character = await this.rickMortyService.getCharacter(id);
-      res.status(200).json(character);
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(404).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+    const character = await this.rickMortyService.getCharacter(id);
+
+    const characterInfo = CharacterDto.toCharacterInformation(character);
+    res.status(200).json(characterInfo);
   }
 
-  async searchCharacters(
-    req: Request,
-    res: Response,
-    _next: NextFunction
-  ): Promise<void> {
-    try {
-      const { q } = req.query;
-      if (!q || typeof q !== "string") {
-        res.status(400).json({ error: "Search query is required" });
-        return;
-      }
+  async addFavoriteCharacter(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
+    const { characterId }: FavoriteCharacterRequest = req.body;
+    const user = req.user;
+    if (!user) throw new AuthenticationError();
 
-      const characters = await this.rickMortyService.searchCharacters(q);
-      res.status(200).json(characters);
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(500).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+    await this.userService.addFavoriteCharacter(user.id, characterId);
+
+    res.status(200).json({ message: "Character added to favorites" });
   }
 
-  async addFavoriteCharacter(
-    req: AuthenticatedRequest,
-    res: Response,
-    _next: NextFunction
-  ): Promise<void> {
-    try {
-      const { characterId }: FavoriteCharacterRequest = req.body;
-      const user = req.user;
+  async removeFavoriteCharacter(req: AuthenticatedRequest, res: Response, _next: NextFunction): Promise<void> {
+    const { characterId }: FavoriteCharacterRequest = req.body;
+    const user = req.user;
+    if (!user) throw new AuthenticationError();
 
-      if (!user) {
-        res.status(401).json({ error: "User not authenticated" });
-        return;
-      }
+    await this.userService.removeFavoriteCharacter(user.id, characterId);
 
-      await this.userService.addFavoriteCharacter(user.id, characterId);
-
-      res.status(200).json({ message: "Character added to favorites" });
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
-  }
-
-  async removeFavoriteCharacter(
-    req: AuthenticatedRequest,
-    res: Response,
-    _next: NextFunction
-  ): Promise<void> {
-    try {
-      const { characterId }: FavoriteCharacterRequest = req.body;
-      const user = req.user;
-
-      if (!user) {
-        res.status(401).json({ error: "User not authenticated" });
-        return;
-      }
-
-      await this.userService.removeFavoriteCharacter(user.id, characterId);
-
-      res.status(200).json({ message: "Character removed from favorites" });
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+    res.status(200).json({ message: "Character removed from favorites" });
   }
 }
