@@ -28,16 +28,9 @@ export const RegisterPage = () => {
 
   return (
     <Container>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <Card style={{ width: "100%", maxWidth: "400px" }}>
-          <h1 style={{ textAlign: "center", marginBottom: "24px" }}>Register for Rick & Morty App</h1>
+      <div className="auth-container">
+        <Card className="auth-card">
+          <h1 className="auth-title">Register for Rick & Morty App</h1>
 
           <Form onSubmit={handleSubmit(onSubmit)}>
             <FormGroup>
@@ -112,10 +105,10 @@ export const RegisterPage = () => {
             </Button>
           </Form>
 
-          <div style={{ textAlign: "center", marginTop: "16px" }}>
+          <div className="auth-footer">
             <p>
               Already have an account?{" "}
-              <Link to="/login" style={{ color: "#007bff", textDecoration: "none" }}>
+              <Link to="/login" className="auth-link">
                 Login here
               </Link>
             </p>

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Request, Response } from "express";
 import { AuthController } from "./AuthController";
 import { AuthService } from "../services/auth/AuthService";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 
 // Mock the AuthService
 const mockAuthService = {
@@ -36,7 +36,7 @@ describe("AuthController", () => {
       email: "test@example.com",
       password: "password123",
       name: "Test User",
-      role: UserRole.FAN,
+      role: UserRoleEnum.FAN,
     };
 
     const expectedResponse = {
@@ -45,7 +45,7 @@ describe("AuthController", () => {
         id: "user-id",
         email: "test@example.com",
         name: "Test User",
-        role: UserRole.FAN,
+        role: UserRoleEnum.FAN,
       },
     };
 
@@ -62,7 +62,7 @@ describe("AuthController", () => {
       email: "existing@example.com",
       password: "password123",
       name: "Existing User",
-      role: UserRole.FAN,
+      role: UserRoleEnum.FAN,
     };
 
     givenValidRegisterRequest(registerData);
@@ -83,7 +83,7 @@ describe("AuthController", () => {
         id: "user-id",
         email: "test@example.com",
         name: "Test User",
-        role: UserRole.FAN,
+        role: UserRoleEnum.FAN,
       },
     };
 

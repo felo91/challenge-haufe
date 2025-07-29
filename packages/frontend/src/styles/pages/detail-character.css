@@ -1,0 +1,67 @@
+/* Detail Character Page Styles */
+
+.detail-character-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  margin-bottom: 20px;
+}
+
+.character-image-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.character-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.character-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.info-section {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.info-value {
+  color: #212529;
+  font-size: 16px;
+}
+
+.episodes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.episode-item {
+  background: #e9ecef;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.character-title {
+  text-align: center;
+  margin-bottom: 20px;
+}

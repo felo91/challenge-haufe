@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CharacterController = void 0;
 const RickMortyService_1 = require("../services/rickMorty/RickMortyService");
-const InMemoryCacheService_1 = require("../services/cache/InMemoryCacheService");
+const CacheFactory_1 = require("../services/cache/CacheFactory");
 const UserService_1 = require("../services/user/UserService");
 const CharacterDto_1 = require("../dto/CharacterDto");
 const errors_1 = require("../errors");
 class CharacterController {
     constructor() {
-        const cacheService = new InMemoryCacheService_1.InMemoryCacheService();
+        const cacheService = CacheFactory_1.CacheFactory.createCacheService();
         this.rickMortyService = new RickMortyService_1.RickMortyService(cacheService);
         this.userService = new UserService_1.UserService();
     }

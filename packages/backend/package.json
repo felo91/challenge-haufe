@@ -13,7 +13,8 @@
     "test:coverage": "vitest --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix"
+    "lint:fix": "eslint src --ext .ts --fix",
+    "cache-demo": "tsx src/scripts/cache-demo.ts"
   },
   "dependencies": {
     "@rick-morty-app/libs": "workspace:*",

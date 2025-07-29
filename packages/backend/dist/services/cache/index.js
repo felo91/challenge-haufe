@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./ICacheService"), exports);
 __exportStar(require("./InMemoryCacheService"), exports);
 __exportStar(require("./RedisCacheService"), exports);
+__exportStar(require("./CacheFactory"), exports);
 //# sourceMappingURL=index.js.map

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Response, NextFunction } from "express";
 import { requireRole, requireProductOwner, requireFan, requireAnyRole } from "./roleAuth";
 import { AuthenticatedRequest } from "./auth";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 
 describe("RoleAuthMiddleware", () => {
   let mockRequest: Partial<AuthenticatedRequest>;
@@ -20,7 +20,7 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should allow access for product owner role", async (): Promise<void> => {
-    givenUserWithRole(UserRole.PRODUCT_OWNER);
+    givenUserWithRole(UserRoleEnum.PRODUCT_OWNER);
 
     whenProductOwnerMiddlewareIsCalled();
 
@@ -28,7 +28,7 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should deny access for fan role when product owner required", async (): Promise<void> => {
-    givenUserWithRole(UserRole.FAN);
+    givenUserWithRole(UserRoleEnum.FAN);
 
     expect(() => whenProductOwnerMiddlewareIsCalled()).toThrow("Insufficient permissions");
   });
@@ -40,7 +40,7 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should allow access for any role with requireAnyRole", async (): Promise<void> => {
-    givenUserWithRole(UserRole.FAN);
+    givenUserWithRole(UserRoleEnum.FAN);
 
     whenAnyRoleMiddlewareIsCalled();
 
@@ -48,7 +48,7 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should allow access for product owner with requireAnyRole", async (): Promise<void> => {
-    givenUserWithRole(UserRole.PRODUCT_OWNER);
+    givenUserWithRole(UserRoleEnum.PRODUCT_OWNER);
 
     whenAnyRoleMiddlewareIsCalled();
 
@@ -56,7 +56,7 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should allow access for fan role with requireFan", async (): Promise<void> => {
-    givenUserWithRole(UserRole.FAN);
+    givenUserWithRole(UserRoleEnum.FAN);
 
     whenFanMiddlewareIsCalled();
 
@@ -64,21 +64,21 @@ describe("RoleAuthMiddleware", () => {
   });
 
   it("should deny access for product owner when fan role required", async (): Promise<void> => {
-    givenUserWithRole(UserRole.PRODUCT_OWNER);
+    givenUserWithRole(UserRoleEnum.PRODUCT_OWNER);
 
     expect(() => whenFanMiddlewareIsCalled()).toThrow("Insufficient permissions");
   });
 
   it("should allow access with custom role requirement", async (): Promise<void> => {
-    givenUserWithRole(UserRole.FAN);
+    givenUserWithRole(UserRoleEnum.FAN);
 
-    whenCustomRoleMiddlewareIsCalled([UserRole.FAN, UserRole.PRODUCT_OWNER]);
+    whenCustomRoleMiddlewareIsCalled([UserRoleEnum.FAN, UserRoleEnum.PRODUCT_OWNER]);
 
     thenAccessIsGranted();
   });
 
   // Given functions
-  function givenUserWithRole(role: UserRole): void {
+  function givenUserWithRole(role: string): void {
     mockRequest.user = {
       id: "user-123",
       email: "test@example.com",
@@ -104,7 +104,7 @@ describe("RoleAuthMiddleware", () => {
     requireAnyRole(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
   }
 
-  function whenCustomRoleMiddlewareIsCalled(allowedRoles: UserRole[]): void {
+  function whenCustomRoleMiddlewareIsCalled(allowedRoles: string[]): void {
     requireRole(allowedRoles)(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
   }
 
@@ -121,7 +121,7 @@ describe("RoleAuthMiddleware", () => {
     expect(mockResponse.json).toHaveBeenCalled();
   }
 
-  function thenErrorIncludesRequiredRoles(requiredRoles: UserRole[]): void {
+  function thenErrorIncludesRequiredRoles(requiredRoles: string[]): void {
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
         error: "Insufficient permissions",

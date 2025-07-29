@@ -3,6 +3,7 @@ import { ICacheService } from "./ICacheService";
 
 export class RedisCacheService implements ICacheService {
   private client: RedisClientType;
+  private isConnected: boolean = false;
 
   constructor() {
     this.client = createClient({
@@ -11,12 +12,31 @@ export class RedisCacheService implements ICacheService {
 
     this.client.on("error", (err) => {
       console.error("Redis Client Error:", err);
+      this.isConnected = false;
     });
 
-    this.client.connect().catch(console.error);
+    this.client.on("connect", () => {
+      console.log("Redis client connected");
+      this.isConnected = true;
+    });
+
+    this.client.on("disconnect", () => {
+      console.log("Redis client disconnected");
+      this.isConnected = false;
+    });
+
+    this.client.connect().catch((error) => {
+      console.error("Failed to connect to Redis:", error);
+      this.isConnected = false;
+    });
   }
 
   async get<T>(key: string): Promise<T | null> {
+    if (!this.isConnected) {
+      console.warn("Redis not connected, returning null for key:", key);
+      return null;
+    }
+
     try {
       const value = await this.client.get(key);
       return value ? JSON.parse(value) : null;
@@ -27,6 +47,11 @@ export class RedisCacheService implements ICacheService {
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+    if (!this.isConnected) {
+      console.warn("Redis not connected, skipping set for key:", key);
+      return;
+    }
+
     try {
       const serializedValue = JSON.stringify(value);
       if (ttl) {
@@ -40,6 +65,11 @@ export class RedisCacheService implements ICacheService {
   }
 
   async delete(key: string): Promise<void> {
+    if (!this.isConnected) {
+      console.warn("Redis not connected, skipping delete for key:", key);
+      return;
+    }
+
     try {
       await this.client.del(key);
     } catch (error) {
@@ -48,6 +78,11 @@ export class RedisCacheService implements ICacheService {
   }
 
   async exists(key: string): Promise<boolean> {
+    if (!this.isConnected) {
+      console.warn("Redis not connected, returning false for exists check:", key);
+      return false;
+    }
+
     try {
       const result = await this.client.exists(key);
       return result === 1;
@@ -58,6 +93,11 @@ export class RedisCacheService implements ICacheService {
   }
 
   async clear(): Promise<void> {
+    if (!this.isConnected) {
+      console.warn("Redis not connected, skipping clear operation");
+      return;
+    }
+
     try {
       await this.client.flushAll();
     } catch (error) {
@@ -66,6 +106,17 @@ export class RedisCacheService implements ICacheService {
   }
 
   async disconnect(): Promise<void> {
-    await this.client.quit();
+    if (this.isConnected) {
+      try {
+        await this.client.quit();
+        this.isConnected = false;
+      } catch (error) {
+        console.error("Redis disconnect error:", error);
+      }
+    }
+  }
+
+  isRedisConnected(): boolean {
+    return this.isConnected;
   }
 }

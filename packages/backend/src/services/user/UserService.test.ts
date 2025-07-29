@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { UserService } from "./UserService";
 import { User } from "../../entities/User";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 
 // Mock the database repository
 const mockUserRepository = {
@@ -25,7 +25,7 @@ describe("UserService", () => {
     testUser.id = "test-id";
     testUser.email = "test@example.com";
     testUser.name = "Test User";
-    testUser.role = UserRole.FAN;
+    testUser.role = UserRoleEnum.FAN;
     testUser.favoriteCharacters = [1, 2, 3];
 
     vi.clearAllMocks();
@@ -134,30 +134,19 @@ describe("UserService", () => {
     return userService.findUserByEmail(email);
   }
 
-  async function whenFavoriteCharacterIsAdded(
-    userId: string,
-    characterId: number
-  ): Promise<void> {
+  async function whenFavoriteCharacterIsAdded(userId: string, characterId: number): Promise<void> {
     return userService.addFavoriteCharacter(userId, characterId);
   }
 
-  async function whenFavoriteCharacterIsRemoved(
-    userId: string,
-    characterId: number
-  ): Promise<void> {
+  async function whenFavoriteCharacterIsRemoved(userId: string, characterId: number): Promise<void> {
     return userService.removeFavoriteCharacter(userId, characterId);
   }
 
-  async function whenFavoriteCharactersAreRetrieved(
-    userId: string
-  ): Promise<number[]> {
+  async function whenFavoriteCharactersAreRetrieved(userId: string): Promise<number[]> {
     return userService.getFavoriteCharacters(userId);
   }
 
-  async function whenFavoriteCharacterIsChecked(
-    userId: string,
-    characterId: number
-  ): Promise<boolean> {
+  async function whenFavoriteCharacterIsChecked(userId: string, characterId: number): Promise<boolean> {
     return userService.isFavoriteCharacter(userId, characterId);
   }
 

@@ -1,0 +1,6 @@
+/* Main Styles - Import all component and page styles */
+
+@import "./components/common.css";
+@import "./pages/auth.css";
+@import "./pages/characters.css";
+@import "./pages/detail-character.css";

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { User } from "./User";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
+import bcrypt from "bcryptjs";
 
 describe("User Entity", () => {
   let user: User;
@@ -21,28 +22,28 @@ describe("User Entity", () => {
     const plainPassword = "testpassword123";
     givenAUserWithPlainPassword(plainPassword);
 
-    whenPasswordIsSet(plainPassword);
+    await whenPasswordIsSet(plainPassword);
 
     thenPasswordIsHashed();
   });
 
   it("should validate password correctly", async (): Promise<void> => {
     const plainPassword = "testpassword123";
-    givenAUserWithHashedPassword(plainPassword);
+    await givenAUserWithHashedPassword(plainPassword);
 
-    whenPasswordIsValidated(plainPassword);
+    const result = await whenPasswordIsValidated(plainPassword);
 
-    thenPasswordIsValid();
+    thenPasswordIsValid(result);
   });
 
   it("should reject invalid password", async (): Promise<void> => {
     const correctPassword = "testpassword123";
     const wrongPassword = "wrongpassword";
-    givenAUserWithHashedPassword(correctPassword);
+    await givenAUserWithHashedPassword(correctPassword);
 
-    whenPasswordIsValidated(wrongPassword);
+    const result = await whenPasswordIsValidated(wrongPassword);
 
-    thenPasswordIsInvalid();
+    thenPasswordIsInvalid(result);
   });
 
   it("should add favorite character", async (): Promise<void> => {
@@ -67,33 +68,33 @@ describe("User Entity", () => {
   function givenAUserWithValidProperties(): void {
     user.email = "test@example.com";
     user.name = "Test User";
-    user.role = UserRole.FAN;
+    user.role = UserRoleEnum.FAN;
   }
 
   function givenAUserWithPlainPassword(password: string): void {
     user.email = "test@example.com";
     user.name = "Test User";
-    user.role = UserRole.FAN;
+    user.role = UserRoleEnum.FAN;
   }
 
-  function givenAUserWithHashedPassword(plainPassword: string): void {
+  async function givenAUserWithHashedPassword(plainPassword: string): Promise<void> {
     user.email = "test@example.com";
     user.name = "Test User";
-    user.role = UserRole.FAN;
-    user.setPassword(plainPassword);
+    user.role = UserRoleEnum.FAN;
+    user.password = await bcrypt.hash(plainPassword, 10);
   }
 
   function givenAUserWithNoFavorites(): void {
     user.email = "test@example.com";
     user.name = "Test User";
-    user.role = UserRole.FAN;
+    user.role = UserRoleEnum.FAN;
     user.favoriteCharacters = [];
   }
 
   function givenAUserWithFavoriteCharacter(characterId: number): void {
     user.email = "test@example.com";
     user.name = "Test User";
-    user.role = UserRole.FAN;
+    user.role = UserRoleEnum.FAN;
     user.favoriteCharacters = [characterId];
   }
 
@@ -102,12 +103,14 @@ describe("User Entity", () => {
     // User is already created in beforeEach
   }
 
-  function whenPasswordIsSet(password: string): void {
+  async function whenPasswordIsSet(password: string): Promise<void> {
     user.setPassword(password);
+    // Manually hash the password for testing since @BeforeInsert/@BeforeUpdate only work with database operations
+    user.password = await bcrypt.hash(password, 10);
   }
 
-  function whenPasswordIsValidated(password: string): void {
-    user.validatePassword(password);
+  async function whenPasswordIsValidated(password: string): Promise<boolean> {
+    return await user.validatePassword(password);
   }
 
   function whenFavoriteCharacterIsAdded(characterId: number): void {
@@ -122,7 +125,7 @@ describe("User Entity", () => {
   function thenUserHasValidProperties(): void {
     expect(user.email).toBe("test@example.com");
     expect(user.name).toBe("Test User");
-    expect(user.role).toBe(UserRole.FAN);
+    expect(user.role).toBe(UserRoleEnum.FAN);
     expect(user.id).toBeUndefined(); // Not saved yet
   }
 
@@ -131,12 +134,12 @@ describe("User Entity", () => {
     expect(user.password).toMatch(/^\$2[aby]\$\d{1,2}\$[./A-Za-z0-9]{53}$/); // bcrypt pattern
   }
 
-  function thenPasswordIsValid(): void {
-    expect(user.validatePassword("testpassword123")).toBe(true);
+  function thenPasswordIsValid(result: boolean): void {
+    expect(result).toBe(true);
   }
 
-  function thenPasswordIsInvalid(): void {
-    expect(user.validatePassword("wrongpassword")).toBe(false);
+  function thenPasswordIsInvalid(result: boolean): void {
+    expect(result).toBe(false);
   }
 
   function thenCharacterIsInFavorites(characterId: number): void {

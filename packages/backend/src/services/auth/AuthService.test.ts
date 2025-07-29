@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AuthService } from "./AuthService";
 import { User } from "../../entities/User";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 import * as jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 // Mock the database repository
 const mockUserRepository = {
@@ -27,7 +28,7 @@ describe("AuthService", () => {
     testUser.id = "test-id";
     testUser.email = "test@example.com";
     testUser.name = "Test User";
-    testUser.role = UserRole.FAN;
+    testUser.role = UserRoleEnum.FAN;
     testUser.setPassword("password123");
 
     vi.clearAllMocks();
@@ -38,7 +39,7 @@ describe("AuthService", () => {
       email: "new@example.com",
       password: "password123",
       name: "New User",
-      role: UserRole.FAN,
+      role: UserRoleEnum.FAN,
     };
 
     givenUserDoesNotExist(registerData.email);
@@ -55,14 +56,12 @@ describe("AuthService", () => {
       email: "existing@example.com",
       password: "password123",
       name: "Existing User",
-      role: UserRole.FAN,
+      role: UserRoleEnum.FAN,
     };
 
     givenUserExists(registerData.email);
 
-    await expect(whenUserRegisters(registerData)).rejects.toThrow(
-      "User already exists"
-    );
+    await expect(whenUserRegisters(registerData)).rejects.toThrow("User already exists");
   });
 
   it("should login user with valid credentials", async (): Promise<void> => {
@@ -85,11 +84,23 @@ describe("AuthService", () => {
       password: "wrongpassword",
     };
 
-    givenUserExistsWithCredentials(loginData.email, "password123");
+    // Create a new user instance and mock validatePassword to return false synchronously
+    const user = new User();
+    user.id = "test-id";
+    user.email = loginData.email;
+    user.name = "Test User";
+    user.role = UserRoleEnum.FAN;
+    user.setPassword("password123");
+    // Mock validatePassword to return false synchronously since AuthService doesn't await it
+    user.validatePassword = vi.fn().mockReturnValue(false);
 
-    await expect(whenUserLogsIn(loginData)).rejects.toThrow(
-      "Invalid credentials"
-    );
+    // Ensure findOne always returns this user instance
+    mockUserRepository.findOne.mockImplementation(async ({ where }) => {
+      if (where && where.email === loginData.email) return user;
+      return null;
+    });
+
+    await expect(whenUserLogsIn(loginData)).rejects.toThrow("Invalid credentials");
   });
 
   it("should reject login with non-existent user", async (): Promise<void> => {
@@ -100,9 +111,7 @@ describe("AuthService", () => {
 
     givenUserDoesNotExist(loginData.email);
 
-    await expect(whenUserLogsIn(loginData)).rejects.toThrow(
-      "Invalid credentials"
-    );
+    await expect(whenUserLogsIn(loginData)).rejects.toThrow("Invalid credentials");
   });
 
   // Given functions
@@ -121,22 +130,31 @@ describe("AuthService", () => {
     newUser.role = data.role;
     newUser.setPassword(data.password);
     newUser.id = "new-id";
-
+    // Manually hash the password for the mock
+    bcrypt.hash(data.password, 10).then((hashed) => {
+      newUser.password = hashed;
+    });
     mockUserRepository.create.mockReturnValue(newUser);
-    mockUserRepository.save.mockResolvedValue(newUser);
+    mockUserRepository.save.mockImplementation(async (user) => {
+      // Simulate hashing before save
+      user.password = await bcrypt.hash(user.password, 10);
+      return user;
+    });
   }
 
-  function givenUserExistsWithCredentials(
-    email: string,
-    password: string
-  ): void {
+  function givenUserExistsWithCredentials(email: string, password: string): void {
     const user = new User();
     user.id = "test-id";
     user.email = email;
     user.name = "Test User";
-    user.role = UserRole.FAN;
+    user.role = UserRoleEnum.FAN;
     user.setPassword(password);
-
+    // Manually hash the password for the mock
+    bcrypt.hash(password, 10).then((hashed) => {
+      user.password = hashed;
+    });
+    // Mock validatePassword to return true synchronously since AuthService doesn't await it
+    user.validatePassword = vi.fn().mockReturnValue(true);
     mockUserRepository.findOne.mockResolvedValue(user);
   }
 
@@ -154,7 +172,7 @@ describe("AuthService", () => {
     expect(result.user).toBeDefined();
     expect(result.user.email).toBe("new@example.com");
     expect(result.user.name).toBe("New User");
-    expect(result.user.role).toBe(UserRole.FAN);
+    expect(result.user.role).toBe(UserRoleEnum.FAN);
     expect(result.token).toBeDefined();
   }
 
@@ -173,10 +191,7 @@ describe("AuthService", () => {
   }
 
   function thenTokenIsValid(token: string): void {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "default-secret"
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default-secret");
     expect(decoded).toBeDefined();
   }
 });

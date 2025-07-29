@@ -1,127 +1,127 @@
-import styled from "styled-components";
+import React from "react";
 
-export const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-`;
+interface ContainerProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export const Card = styled.div`
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  margin-bottom: 20px;
-`;
+export const Container: React.FC<ContainerProps> = ({ children, className = "" }) => (
+  <div className={`container ${className}`}>{children}</div>
+);
 
-export const Button = styled.button<{ variant?: "primary" | "secondary" | "danger" }>`
-  padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-  background-color: ${({ variant }) => {
-    switch (variant) {
-      case "secondary":
-        return "#6c757d";
-      case "danger":
-        return "#dc3545";
-      default:
-        return "#007bff";
-    }
-  }};
+export const Card: React.FC<CardProps> = ({ children, className = "" }) => (
+  <div className={`card ${className}`}>{children}</div>
+);
 
-  color: white;
+interface ButtonProps {
+  children: React.ReactNode;
+  variant?: "primary" | "secondary" | "danger";
+  onClick?: () => void;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  className?: string;
+}
 
-  &:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = "primary",
+  onClick,
+  disabled = false,
+  type = "button",
+  className = "",
+}) => (
+  <button
+    className={`button ${variant !== "primary" ? variant : ""} ${className}`}
+    onClick={onClick}
+    disabled={disabled}
+    type={type}
+  >
+    {children}
+  </button>
+);
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
+interface InputProps {
+  id?: string;
+  type?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  [key: string]: any;
+}
 
-export const Input = styled.input`
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = "", ...props }, ref) => (
+  <input className={`input ${className}`} ref={ref} {...props} />
+));
 
-  &:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  }
-`;
+Input.displayName = "Input";
 
-export const Select = styled.select`
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: white;
+interface SelectProps {
+  id?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  children: React.ReactNode;
+  className?: string;
+  [key: string]: any;
+}
 
-  &:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  }
-`;
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({ className = "", ...props }, ref) => (
+  <select className={`select ${className}`} ref={ref} {...props} />
+));
 
-export const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
+Select.displayName = "Select";
 
-export const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
+interface FormProps {
+  children: React.ReactNode;
+  onSubmit?: (e: React.FormEvent) => void;
+  className?: string;
+}
 
-export const Label = styled.label`
-  font-weight: 500;
-  color: #333;
-`;
+export const Form: React.FC<FormProps> = ({ children, onSubmit, className = "" }) => (
+  <form className={`form ${className}`} onSubmit={onSubmit}>
+    {children}
+  </form>
+);
 
-export const ErrorMessage = styled.div`
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 4px;
-`;
+interface FormGroupProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export const LoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+export const FormGroup: React.FC<FormGroupProps> = ({ children, className = "" }) => (
+  <div className={`form-group ${className}`}>{children}</div>
+);
 
-  &::after {
-    content: "";
-    width: 32px;
-    height: 32px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
+interface LabelProps {
+  children: React.ReactNode;
+  htmlFor?: string;
+  className?: string;
+}
 
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
+export const Label: React.FC<LabelProps> = ({ children, htmlFor, className = "" }) => (
+  <label className={`label ${className}`} htmlFor={htmlFor}>
+    {children}
+  </label>
+);
+
+interface ErrorMessageProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const ErrorMessage: React.FC<ErrorMessageProps> = ({ children, className = "" }) => (
+  <div className={`error-message ${className}`}>{children}</div>
+);
+
+interface LoadingSpinnerProps {
+  className?: string;
+}
+
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ className = "" }) => (
+  <div className={`loading-spinner ${className}`} />
+);

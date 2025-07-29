@@ -3,54 +3,6 @@ import { useCharacterDetails } from "@/hooks/useCharacters";
 import { useAuthStore } from "@/stores/authStore";
 import { useLogout } from "@/hooks/useAuth";
 import { Container, Card, Button, LoadingSpinner } from "@/components/styled/Common";
-import styled from "styled-components";
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const CharacterInfo = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-const InfoSection = styled.div`
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
-`;
-
-const InfoLabel = styled.div`
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 8px;
-`;
-
-const InfoValue = styled.div`
-  color: #212529;
-  font-size: 16px;
-`;
-
-const ImageContainer = styled.div`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const CharacterImage = styled.img`
-  width: 200px;
-  height: 200px;
-  border-radius: 8px;
-  object-fit: cover;
-`;
-
-const BackButton = styled(Button)`
-  margin-bottom: 20px;
-`;
 
 export const DetailCharacterPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -79,7 +31,9 @@ export const DetailCharacterPage = () => {
         <Card>
           <h2>Error loading character details</h2>
           <p>{error.message}</p>
-          <BackButton onClick={() => navigate("/characters")}>Back to Characters</BackButton>
+          <Button className="back-button" onClick={() => navigate("/characters")}>
+            Back to Characters
+          </Button>
         </Card>
       </Container>
     );
@@ -90,7 +44,9 @@ export const DetailCharacterPage = () => {
       <Container>
         <Card>
           <h2>Character not found</h2>
-          <BackButton onClick={() => navigate("/characters")}>Back to Characters</BackButton>
+          <Button className="back-button" onClick={() => navigate("/characters")}>
+            Back to Characters
+          </Button>
         </Card>
       </Container>
     );
@@ -98,7 +54,7 @@ export const DetailCharacterPage = () => {
 
   return (
     <Container>
-      <Header>
+      <div className="detail-character-header">
         <div>
           <h1>Character Details</h1>
           <p>Welcome, {user?.name} (Product Owner)</p>
@@ -106,69 +62,56 @@ export const DetailCharacterPage = () => {
         <Button variant="secondary" onClick={logout}>
           Logout
         </Button>
-      </Header>
+      </div>
 
-      <BackButton onClick={() => navigate("/characters")}>← Back to Characters</BackButton>
+      <Button className="back-button" onClick={() => navigate("/characters")}>
+        ← Back to Characters
+      </Button>
 
       <Card>
-        <ImageContainer>
-          <CharacterImage src={character.image} alt={character.name} />
-        </ImageContainer>
+        <div className="character-image-container">
+          <img className="character-image" src={character.image} alt={character.name} />
+        </div>
 
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>{character.name}</h2>
+        <h2 className="character-title">{character.name}</h2>
 
-        <CharacterInfo>
-          <InfoSection>
-            <InfoLabel>Status</InfoLabel>
-            <InfoValue>{character.status}</InfoValue>
-          </InfoSection>
+        <div className="character-info">
+          <div className="info-section">
+            <div className="info-label">Status</div>
+            <div className="info-value">{character.status}</div>
+          </div>
 
-          <InfoSection>
-            <InfoLabel>Species</InfoLabel>
-            <InfoValue>{character.species}</InfoValue>
-          </InfoSection>
+          <div className="info-section">
+            <div className="info-label">Species</div>
+            <div className="info-value">{character.species}</div>
+          </div>
 
-          <InfoSection>
-            <InfoLabel>Type</InfoLabel>
-            <InfoValue>{character.type || "Unknown"}</InfoValue>
-          </InfoSection>
+          <div className="info-section">
+            <div className="info-label">Type</div>
+            <div className="info-value">{character.type || "Unknown"}</div>
+          </div>
 
-          <InfoSection>
-            <InfoLabel>Gender</InfoLabel>
-            <InfoValue>{character.gender}</InfoValue>
-          </InfoSection>
+          <div className="info-section">
+            <div className="info-label">Gender</div>
+            <div className="info-value">{character.gender}</div>
+          </div>
 
-          <InfoSection>
-            <InfoLabel>Origin</InfoLabel>
-            <InfoValue>{character.origin.name}</InfoValue>
-          </InfoSection>
+          <div className="info-section">
+            <div className="info-label">Origin</div>
+            <div className="info-value">{character.origin.name}</div>
+          </div>
 
-          <InfoSection>
-            <InfoLabel>Location</InfoLabel>
-            <InfoValue>{character.location.name}</InfoValue>
-          </InfoSection>
-        </CharacterInfo>
+          <div className="info-section">
+            <div className="info-label">Location</div>
+            <div className="info-value">{character.location.name}</div>
+          </div>
+        </div>
 
         <div style={{ marginTop: "20px" }}>
-          <InfoLabel>Episodes</InfoLabel>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: "10px",
-              marginTop: "10px",
-            }}
-          >
+          <div className="info-label">Episodes</div>
+          <div className="episodes-grid">
             {character.episode.map((episode, index) => (
-              <div
-                key={index}
-                style={{
-                  background: "#e9ecef",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                }}
-              >
+              <div key={index} className="episode-item">
                 Episode {episode.split("/").pop()}
               </div>
             ))}
@@ -176,8 +119,8 @@ export const DetailCharacterPage = () => {
         </div>
 
         <div style={{ marginTop: "20px" }}>
-          <InfoLabel>Created</InfoLabel>
-          <InfoValue>{new Date(character.created).toLocaleDateString()}</InfoValue>
+          <div className="info-label">Created</div>
+          <div className="info-value">{new Date(character.created).toLocaleDateString()}</div>
         </div>
       </Card>
     </Container>

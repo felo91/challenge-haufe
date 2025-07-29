@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 import { RickMortyService } from "../services/rickMorty/RickMortyService";
-import { InMemoryCacheService } from "../services/cache/InMemoryCacheService";
+import { CacheFactory } from "../services/cache/CacheFactory";
 import { UserService } from "../services/user/UserService";
 import { AuthenticatedRequest } from "../middleware/auth";
 import { FavoriteCharacterRequest } from "@rick-morty-app/libs";
@@ -12,7 +12,7 @@ export class CharacterController {
   private userService: UserService;
 
   constructor() {
-    const cacheService = new InMemoryCacheService();
+    const cacheService = CacheFactory.createCacheService();
     this.rickMortyService = new RickMortyService(cacheService);
     this.userService = new UserService();
   }

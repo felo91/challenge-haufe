@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { CharacterDto } from "./CharacterDto";
 import { Character } from "@rick-morty-app/libs";
 import { User } from "../entities/User";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 
 describe("CharacterDto", () => {
   let mockCharacter: Character;
@@ -34,7 +34,7 @@ describe("CharacterDto", () => {
     mockUser.id = "user-123";
     mockUser.email = "test@example.com";
     mockUser.name = "Test User";
-    mockUser.role = UserRole.FAN;
+    mockUser.role = UserRoleEnum.FAN;
     mockUser.favoriteCharacters = [1, 3, 5];
   });
 
