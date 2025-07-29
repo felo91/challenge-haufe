@@ -102,7 +102,7 @@ Once the backend is running, visit:
 4. **Start Development**: `yarn dev`
 5. **Run Tests**: `yarn test && yarn test:frontend`
 
-## 📝 Environment Variables
+## Environment Variables
 
 ### Backend (.env)
 

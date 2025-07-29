@@ -107,7 +107,6 @@ describe("AuthController", () => {
     await expect(whenLoginIsCalled()).rejects.toThrow("Invalid credentials");
   });
 
-  // Given functions
   function givenValidRegisterRequest(data: any): void {
     mockRequest.body = data;
   }
@@ -126,7 +125,6 @@ describe("AuthController", () => {
     mockAuthService.login.mockRejectedValue(new Error(message));
   }
 
-  // When functions
   async function whenRegisterIsCalled(): Promise<void> {
     await authController.register(mockRequest as Request, mockResponse as Response, mockNext);
   }
@@ -135,7 +133,6 @@ describe("AuthController", () => {
     await authController.login(mockRequest as Request, mockResponse as Response, mockNext);
   }
 
-  // Then functions
   function thenResponseIsSuccessful(expectedResponse: any): void {
     expect(mockResponse.status).toHaveBeenCalledWith(201);
     expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
