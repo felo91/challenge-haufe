@@ -4,7 +4,7 @@ exports.CharacterQueryDto = void 0;
 class CharacterQueryDto {
     static toUrlParams(query) {
         const params = new URLSearchParams();
-        const page = query.page || 1;
+        const page = query.page;
         if (page > 1)
             params.append("page", page.toString());
         return params;

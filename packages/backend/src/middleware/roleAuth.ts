@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "./auth";
-import { UserRole } from "@rick-morty-app/libs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 import { AuthenticationError, AuthorizationError } from "../errors";
 
-export const requireRole = (allowedRoles: UserRole[]) => {
+export const requireRole = (allowedRoles: string[]) => {
   return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     if (!req.user) throw new AuthenticationError();
 
@@ -14,6 +14,6 @@ export const requireRole = (allowedRoles: UserRole[]) => {
   };
 };
 
-export const requireProductOwner = requireRole([UserRole.PRODUCT_OWNER]);
-export const requireFan = requireRole([UserRole.FAN]);
-export const requireAnyRole = requireRole([UserRole.FAN, UserRole.PRODUCT_OWNER]);
+export const requireProductOwner = requireRole([UserRoleEnum.PRODUCT_OWNER]);
+export const requireFan = requireRole([UserRoleEnum.FAN]);
+export const requireAnyRole = requireRole([UserRoleEnum.FAN, UserRoleEnum.PRODUCT_OWNER]);

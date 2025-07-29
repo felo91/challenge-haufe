@@ -4,55 +4,55 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
-import { IsEmail, IsString, MinLength, IsEnum, IsArray } from "class-validator";
-import * as bcrypt from "bcryptjs";
-import { UserRole } from "@rick-morty-app/libs";
+import bcrypt from "bcryptjs";
+import { UserRoleEnum } from "@rick-morty-app/libs";
 
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id!: string;
+  id: string;
 
   @Column({ type: "varchar", unique: true })
-  @IsEmail()
-  email!: string;
+  email: string;
 
   @Column({ type: "varchar" })
-  @IsString()
-  @MinLength(2)
-  name!: string;
+  name: string;
 
   @Column({ type: "varchar" })
-  @IsString()
-  @MinLength(6)
-  password!: string;
+  password: string;
 
   @Column({
-    type: "enum",
-    enum: UserRole,
-    default: UserRole.FAN,
+    type: "varchar",
+    default: UserRoleEnum.FAN,
   })
-  @IsEnum(UserRole)
-  role!: UserRole;
+  role: string;
 
-  @Column("int", { array: true, default: [] })
-  @IsArray()
-  favoriteCharacters: number[] = [];
+  @Column({ type: "int", array: true, default: [] })
+  favoriteCharacters: number[];
 
   @CreateDateColumn()
-  createdAt!: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+  updatedAt: Date;
 
-  setPassword(plainPassword: string): void {
-    const saltRounds = 12;
-    this.password = bcrypt.hashSync(plainPassword, saltRounds);
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 
-  validatePassword(plainPassword: string): boolean {
-    return bcrypt.compareSync(plainPassword, this.password);
+  setPassword(password: string): void {
+    this.password = password;
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 
   addFavoriteCharacter(characterId: number): void {
@@ -62,9 +62,7 @@ export class User {
   }
 
   removeFavoriteCharacter(characterId: number): void {
-    this.favoriteCharacters = this.favoriteCharacters.filter(
-      (id) => id !== characterId
-    );
+    this.favoriteCharacters = this.favoriteCharacters.filter((id) => id !== characterId);
   }
 
   isFavoriteCharacter(characterId: number): boolean {

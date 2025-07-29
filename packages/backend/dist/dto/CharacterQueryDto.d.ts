@@ -1,6 +1,6 @@
 export declare class CharacterQueryDto {
     static toUrlParams(query: {
-        page?: number;
+        page: number;
     }): URLSearchParams;
 }
 //# sourceMappingURL=CharacterQueryDto.d.ts.map

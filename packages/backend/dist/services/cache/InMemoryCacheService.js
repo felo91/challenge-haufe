@@ -7,9 +7,8 @@ class InMemoryCacheService {
     }
     async get(key) {
         const item = this.cache.get(key);
-        if (!item) {
+        if (!item)
             return null;
-        }
         if (item.expiresAt && Date.now() > item.expiresAt) {
             this.cache.delete(key);
             return null;
@@ -25,9 +24,8 @@ class InMemoryCacheService {
     }
     async exists(key) {
         const item = this.cache.get(key);
-        if (!item) {
+        if (!item)
             return false;
-        }
         if (item.expiresAt && Date.now() > item.expiresAt) {
             this.cache.delete(key);
             return false;

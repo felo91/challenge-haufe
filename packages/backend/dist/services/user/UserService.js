@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const User_1 = require("../../entities/User");
 const database_1 = require("../../config/database");
+const errors_1 = require("../../errors");
 class UserService {
     constructor() {
         try {
@@ -14,63 +15,52 @@ class UserService {
         }
     }
     async saveUser(user) {
-        if (!this.userRepository) {
-            throw new Error("Database not available");
-        }
+        if (!this.userRepository)
+            throw new errors_1.DatabaseNotAvailableError();
         return await this.userRepository.save(user);
     }
     async findUserById(id) {
-        if (!this.userRepository) {
+        if (!this.userRepository)
             return null;
-        }
         return await this.userRepository.findOne({ where: { id } });
     }
     async findUserByEmail(email) {
-        if (!this.userRepository) {
+        if (!this.userRepository)
             return null;
-        }
         return await this.userRepository.findOne({ where: { email } });
     }
     async addFavoriteCharacter(userId, characterId) {
-        if (!this.userRepository) {
-            throw new Error("Database not available");
-        }
+        if (!this.userRepository)
+            throw new errors_1.DatabaseNotAvailableError();
         const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-            throw new Error("User not found");
-        }
+        if (!user)
+            throw new errors_1.UserNotFoundError();
         user.addFavoriteCharacter(characterId);
         await this.userRepository.save(user);
     }
     async removeFavoriteCharacter(userId, characterId) {
-        if (!this.userRepository) {
-            throw new Error("Database not available");
-        }
+        if (!this.userRepository)
+            throw new errors_1.DatabaseNotAvailableError();
         const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-            throw new Error("User not found");
-        }
+        if (!user)
+            throw new errors_1.UserNotFoundError();
         user.removeFavoriteCharacter(characterId);
         await this.userRepository.save(user);
     }
     async getFavoriteCharacters(userId) {
-        if (!this.userRepository) {
+        if (!this.userRepository)
             return [];
-        }
         const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-            throw new Error("User not found");
-        }
+        if (!user)
+            throw new errors_1.UserNotFoundError();
         return user.favoriteCharacters;
     }
     async isFavoriteCharacter(userId, characterId) {
-        if (!this.userRepository) {
+        if (!this.userRepository)
             return false;
-        }
         const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
+        if (!user)
             return false;
-        }
         return user.isFavoriteCharacter(characterId);
     }
 }

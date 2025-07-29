@@ -1,4 +1,21 @@
 {
   "name": "rick-morty-app",
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "yarn@4.9.2",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "yarn workspace @rick-morty-app/libs build && yarn workspace @rick-morty-app/backend start:watch & yarn workspace @rick-morty-app/frontend dev",
+    "dev:backend": "yarn workspace @rick-morty-app/backend dev",
+    "dev:frontend": "yarn workspace @rick-morty-app/libs build && yarn workspace @rick-morty-app/frontend dev",
+    "build": "yarn workspace @rick-morty-app/libs build && yarn workspace @rick-morty-app/backend build",
+    "test": "yarn workspace @rick-morty-app/backend test",
+    "test:frontend": "yarn workspace @rick-morty-app/frontend test",
+    "typecheck": "yarn workspace @rick-morty-app/libs typecheck && yarn workspace @rick-morty-app/backend typecheck"
+  },
+  "dependencies": {
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0"
+  }
 }

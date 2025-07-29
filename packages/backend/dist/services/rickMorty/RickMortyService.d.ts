@@ -4,8 +4,8 @@ export declare class RickMortyService {
     private readonly externalApiUrl;
     private readonly cacheService;
     constructor(cacheService: ICacheService);
-    getCharacters(query?: {
-        page?: number;
+    getCharacters(query: {
+        page: number;
     }): Promise<CharacterListResponse>;
     getCharacter(id: number): Promise<Character>;
 }

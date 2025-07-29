@@ -13,7 +13,7 @@ const requireRole = (allowedRoles) => {
     };
 };
 exports.requireRole = requireRole;
-exports.requireProductOwner = (0, exports.requireRole)([libs_1.UserRole.PRODUCT_OWNER]);
-exports.requireFan = (0, exports.requireRole)([libs_1.UserRole.FAN]);
-exports.requireAnyRole = (0, exports.requireRole)([libs_1.UserRole.FAN, libs_1.UserRole.PRODUCT_OWNER]);
+exports.requireProductOwner = (0, exports.requireRole)([libs_1.UserRoleEnum.PRODUCT_OWNER]);
+exports.requireFan = (0, exports.requireRole)([libs_1.UserRoleEnum.FAN]);
+exports.requireAnyRole = (0, exports.requireRole)([libs_1.UserRoleEnum.FAN, libs_1.UserRoleEnum.PRODUCT_OWNER]);
 //# sourceMappingURL=roleAuth.js.map

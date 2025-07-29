@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import * as jwt from "jsonwebtoken";
 import { User } from "../../entities/User";
 import { AppDataSource } from "../../config/database";
-import { RegisterRequest, LoginRequest, AuthResponse } from "@rick-morty-app/libs";
+import { RegisterRequest, LoginRequest, AuthResponse, UserRole } from "@rick-morty-app/libs";
 import { InvalidCredentialsError, UserAlreadyExistsError } from "../../errors";
 
 export class AuthService {
@@ -39,7 +39,7 @@ export class AuthService {
         id: savedUser.id,
         email: savedUser.email,
         name: savedUser.name,
-        role: savedUser.role,
+        role: savedUser.role as UserRole,
       },
     };
   }
@@ -59,7 +59,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        role: user.role as UserRole,
       },
     };
   }

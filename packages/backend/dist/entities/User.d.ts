@@ -1,15 +1,15 @@
-import { UserRole } from "@rick-morty-app/libs";
 export declare class User {
     id: string;
     email: string;
     name: string;
     password: string;
-    role: UserRole;
+    role: string;
     favoriteCharacters: number[];
     createdAt: Date;
     updatedAt: Date;
-    setPassword(plainPassword: string): void;
-    validatePassword(plainPassword: string): boolean;
+    hashPassword(): Promise<void>;
+    setPassword(password: string): void;
+    validatePassword(password: string): Promise<boolean>;
     addFavoriteCharacter(characterId: number): void;
     removeFavoriteCharacter(characterId: number): void;
     isFavoriteCharacter(characterId: number): boolean;

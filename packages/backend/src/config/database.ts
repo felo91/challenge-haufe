@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
   username: process?.env?.["DB_USERNAME"] ?? "postgres",
   password: process?.env?.["DB_PASSWORD"] ?? "postgres",
   database: process?.env?.["DB_NAME"] ?? "rick_morty_app",
-  synchronize: process?.env?.["NODE_ENV"] === "development",
+  synchronize: true, // Always synchronize in development
   logging: process?.env?.["NODE_ENV"] === "development",
   entities: [User],
   migrations: ["src/migrations/*.ts"],

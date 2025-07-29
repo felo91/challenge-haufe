@@ -14,32 +14,6 @@ const errorHandler = (error, req, res, _next) => {
             details = { field: error.field, value: error.value };
         }
     }
-    else {
-        switch (error.name) {
-            case "ValidationError":
-                statusCode = 400;
-                message = "Validation failed";
-                break;
-            case "CastError":
-                statusCode = 400;
-                message = "Invalid data format";
-                break;
-            case "JsonWebTokenError":
-                statusCode = 401;
-                message = "Invalid token";
-                break;
-            case "TokenExpiredError":
-                statusCode = 401;
-                message = "Token expired";
-                break;
-            case "SyntaxError":
-                statusCode = 400;
-                message = "Invalid JSON";
-                break;
-            default:
-                break;
-        }
-    }
     if (statusCode >= 500) {
         logger_1.logger.error({
             error: error.message,

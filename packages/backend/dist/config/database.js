@@ -10,7 +10,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     username: process?.env?.["DB_USERNAME"] ?? "postgres",
     password: process?.env?.["DB_PASSWORD"] ?? "postgres",
     database: process?.env?.["DB_NAME"] ?? "rick_morty_app",
-    synchronize: process?.env?.["NODE_ENV"] === "development",
+    synchronize: true,
     logging: process?.env?.["NODE_ENV"] === "development",
     entities: [entities_1.User],
     migrations: ["src/migrations/*.ts"],
