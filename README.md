@@ -60,66 +60,6 @@ yarn test:frontend     # Frontend tests
 yarn build
 ```
 
-## 📁 Project Structure
-
-```
-rick-morty-app/
-├── packages/
-│   ├── libs/                    # Shared types and schemas
-│   │   ├── src/types/
-│   │   │   ├── auth.ts         # Authentication types
-│   │   │   └── character.ts    # Character types
-│   │   └── dist/               # Built JavaScript files
-│   │
-│   ├── backend/                 # Express.js API server
-│   │   ├── src/
-│   │   │   ├── config/         # Database and logger config
-│   │   │   ├── controllers/    # API controllers
-│   │   │   ├── entities/       # TypeORM entities
-│   │   │   ├── middleware/     # Auth, logging, error handling
-│   │   │   ├── routes/         # API routes
-│   │   │   ├── services/       # Business logic
-│   │   │   └── errors/         # Custom error classes
-│   │   └── tests/              # Backend tests
-│   │
-│   └── frontend/                # React application
-│       ├── src/
-│       │   ├── components/     # React components
-│       │   ├── hooks/          # Custom React hooks
-│       │   ├── pages/          # Page components
-│       │   ├── services/       # API services
-│       │   ├── stores/         # Zustand stores
-│       │   └── tests/          # Integration tests
-│       └── public/             # Static assets
-│
-├── docker-compose.yml          # PostgreSQL and Redis setup
-└── package.json               # Root workspace config
-```
-
-## 🔧 Technology Stack
-
-### Backend
-
-- **Express.js** - Web framework
-- **TypeORM** - Database ORM
-- **PostgreSQL** - Primary database
-- **Redis** - Caching layer
-- **JWT** - Authentication
-- **Pino** - Structured logging
-- **Swagger** - API documentation
-- **Vitest** - Testing framework
-
-### Frontend
-
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **React Query** - Data fetching and caching
-- **React Router** - Navigation
-- **React Hook Form** - Form management
-- **Styled Components** - Styling
-- **Zustand** - State management
-- **Vite** - Build tool
-
 ### Shared
 
 - **Zod** - Schema validation
@@ -147,33 +87,6 @@ rick-morty-app/
 - `POST /api/characters/favorites` - Add character to favorites
 - `DELETE /api/characters/favorites` - Remove character from favorites
 
-## 🎯 Features
-
-### Backend Features
-
-- ✅ **Secure Authentication** with JWT tokens
-- ✅ **Role-Based Access Control** (fan/product_owner)
-- ✅ **Database Integration** with TypeORM and PostgreSQL
-- ✅ **Caching Layer** with Redis (in-memory fallback for tests)
-- ✅ **External API Integration** (Rick & Morty API)
-- ✅ **Structured Logging** with Pino
-- ✅ **API Documentation** with Swagger
-- ✅ **Error Handling** with custom error classes
-- ✅ **Test-Driven Development** with Vitest
-- ✅ **Type Safety** with TypeScript
-
-### Frontend Features
-
-- ✅ **Modern React** with hooks and functional components
-- ✅ **TypeScript** for type safety
-- ✅ **Authentication System** with protected routes
-- ✅ **Character Management** with favorites
-- ✅ **Responsive Design** with flexbox and grid
-- ✅ **Form Validation** with React Hook Form
-- ✅ **State Management** with Zustand
-- ✅ **Data Fetching** with React Query
-- ✅ **Integration Tests** with React Testing Library
-
 ## 🧪 Testing
 
 ### Backend Tests
@@ -182,13 +95,6 @@ rick-morty-app/
 yarn test                    # Run all tests
 yarn workspace @rick-morty-app/backend test:watch    # Watch mode
 yarn workspace @rick-morty-app/backend test:coverage # Coverage report
-```
-
-### Frontend Tests
-
-```bash
-yarn test:frontend          # Run integration tests
-yarn workspace @rick-morty-app/frontend test:watch   # Watch mode
 ```
 
 ## 🐳 Docker Setup
@@ -250,15 +156,3 @@ JWT_SECRET=your-secret-key
 REDIS_URL=redis://localhost:6379
 NODE_ENV=development
 ```
-
-## 🤝 Contributing
-
-1. Follow the existing code style and patterns
-2. Write tests for new features
-3. Ensure all tests pass before submitting
-4. Use TypeScript for type safety
-5. Follow the TDD approach for backend development
-
-## 📄 License
-
-This project is for educational purposes and demonstrates modern full-stack development practices.
