@@ -2,7 +2,7 @@
 
 A sophisticated full-stack application for managing Rick & Morty characters with secure authentication, role-based access control, and real-time data management.
 
-## 🏗️ Architecture
+## Architecture
 
 This is a **monorepo** built with **Yarn 4 Workspaces** containing:
 
@@ -10,7 +10,7 @@ This is a **monorepo** built with **Yarn 4 Workspaces** containing:
 - **`packages/backend`**: Express.js API server with TypeORM and PostgreSQL
 - **`packages/frontend`**: React application with TypeScript and modern tooling
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -60,44 +60,16 @@ yarn test:frontend     # Frontend tests
 yarn build
 ```
 
-### Shared
-
-- **Zod** - Schema validation
-- **Yarn 4** - Package management
-- **Monorepo** - Workspace management
-
-## 🔐 Authentication & Authorization
-
-### User Roles
-
-- **`fan`**: Can view basic character information and manage favorites
-- **`product_owner`**: Can view detailed character information and manage favorites
-
-### API Endpoints
-
-#### Authentication
-
-- `POST /api/auth/register` - User registration with role selection
-- `POST /api/auth/login` - User login
-
-#### Characters
-
-- `GET /api/characters` - List characters (basic info, any authenticated user)
-- `GET /api/characters/:id` - Get character details (product owner only)
-- `POST /api/characters/favorites` - Add character to favorites
-- `DELETE /api/characters/favorites` - Remove character from favorites
-
-## 🧪 Testing
-
-### Backend Tests
+### Testing
 
 ```bash
 yarn test                    # Run all tests
-yarn workspace @rick-morty-app/backend test:watch    # Watch mode
-yarn workspace @rick-morty-app/backend test:coverage # Coverage report
+yarn workspace @rick-morty-app/frontend test    # Basic FE/BE integration tests
+yarn workspace @rick-morty-app/backend test    # Backend tests
+yarn workspace @rick-morty-app/backend test:coverage # BE Coverage report
 ```
 
-## 🐳 Docker Setup
+## Docker Setup
 
 The application includes a `docker-compose.yml` file for easy local development:
 
@@ -109,37 +81,26 @@ docker-compose up -d
 docker-compose down
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the backend is running, visit:
 
 - **Swagger UI**: http://localhost:3001/api-docs
 - **Health Check**: http://localhost:3001/health
 
-## 🌐 Application URLs
+## Local Application URLs
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:3001
 - **API Documentation**: http://localhost:3001/api-docs
 
-## 🔄 Development Workflow
+## Development Workflow
 
 1. **Start Services**: `docker-compose up -d`
 2. **Install Dependencies**: `yarn install`
 3. **Build Libs**: `yarn workspace @rick-morty-app/libs build`
 4. **Start Development**: `yarn dev`
 5. **Run Tests**: `yarn test && yarn test:frontend`
-
-## 🚀 Production Deployment
-
-```bash
-# Build all packages
-yarn build
-
-# Start production servers
-yarn workspace @rick-morty-app/backend start
-yarn workspace @rick-morty-app/frontend preview
-```
 
 ## 📝 Environment Variables
 
