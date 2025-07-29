@@ -6,10 +6,8 @@ export interface LoggedRequest extends Request {
 }
 
 export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFunction): void => {
-  // Add start time to request
   req.startTime = Date.now();
 
-  // Log the incoming request
   logger.info(
     {
       type: "request",
@@ -23,7 +21,6 @@ export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFu
     `📥 ${req.method} ${req.url}`
   );
 
-  // Override res.end to log the response
   const originalEnd = res.end;
   res.end = function (chunk?: any, encoding?: any): Response {
     const duration = Date.now() - (req.startTime || 0);
@@ -43,7 +40,6 @@ export const loggerMiddleware = (req: LoggedRequest, res: Response, next: NextFu
       `${statusEmoji} ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`
     );
 
-    // Call the original end method
     return originalEnd.call(this, chunk, encoding);
   };
 

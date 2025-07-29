@@ -67,12 +67,10 @@ describe("ErrorHandler", () => {
     thenErrorResponseIsSent(403, "Access denied. Required roles: admin. User role: user");
   });
 
-  // When functions
   function whenErrorHandlerIsCalled(error: Error): void {
     errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext);
   }
 
-  // Then functions
   function thenErrorResponseIsSent(statusCode: number, message: string): void {
     expect(mockResponse.status).toHaveBeenCalledWith(statusCode);
     expect(mockResponse.json).toHaveBeenCalledWith(

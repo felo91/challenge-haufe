@@ -2,7 +2,6 @@ import pino from "pino";
 
 const isDevelopment = process.env["NODE_ENV"] === "development";
 
-// Create a development logger with enhanced pretty formatting
 const devLogger = pino({
   level: "debug",
   transport: {
@@ -32,7 +31,6 @@ const devLogger = pino({
   timestamp: () => `,"time":"${new Date().toISOString()}"`,
 });
 
-// Use the prettier logger for development, standard logger for production
 export const logger = isDevelopment
   ? devLogger
   : pino({

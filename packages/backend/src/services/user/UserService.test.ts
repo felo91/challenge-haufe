@@ -108,7 +108,6 @@ describe("UserService", () => {
     thenCharacterIsNotFavorite(result);
   });
 
-  // Given functions
   function givenUserWillBeSaved(user: User): void {
     mockUserRepository.save.mockResolvedValue(user);
   }
@@ -121,7 +120,6 @@ describe("UserService", () => {
     mockUserRepository.findOne.mockResolvedValue(testUser);
   }
 
-  // When functions
   async function whenUserIsSaved(user: User): Promise<User> {
     return userService.saveUser(user);
   }
@@ -150,7 +148,6 @@ describe("UserService", () => {
     return userService.isFavoriteCharacter(userId, characterId);
   }
 
-  // Then functions
   function thenUserIsSaved(result: User): void {
     expect(result).toBe(testUser);
     expect(mockUserRepository.save).toHaveBeenCalledWith(testUser);

@@ -77,7 +77,6 @@ describe("RoleAuthMiddleware", () => {
     thenAccessIsGranted();
   });
 
-  // Given functions
   function givenUserWithRole(role: string): void {
     mockRequest.user = {
       id: "user-123",
@@ -91,7 +90,6 @@ describe("RoleAuthMiddleware", () => {
     mockRequest.user = undefined;
   }
 
-  // When functions
   function whenProductOwnerMiddlewareIsCalled(): void {
     requireProductOwner(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
   }
@@ -108,7 +106,6 @@ describe("RoleAuthMiddleware", () => {
     requireRole(allowedRoles)(mockRequest as AuthenticatedRequest, mockResponse as Response, mockNext);
   }
 
-  // Then functions
   function thenAccessIsGranted(): void {
     expect(mockNext).toHaveBeenCalled();
     expect(mockResponse.status).not.toHaveBeenCalled();

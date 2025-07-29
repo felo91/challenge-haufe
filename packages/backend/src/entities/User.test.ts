@@ -64,7 +64,6 @@ describe("User Entity", () => {
     thenCharacterIsNotInFavorites(characterId);
   });
 
-  // Given functions
   function givenAUserWithValidProperties(): void {
     user.email = "test@example.com";
     user.name = "Test User";
@@ -98,10 +97,7 @@ describe("User Entity", () => {
     user.favoriteCharacters = [characterId];
   }
 
-  // When functions
-  function whenUserIsCreated(): void {
-    // User is already created in beforeEach
-  }
+  function whenUserIsCreated(): void {}
 
   async function whenPasswordIsSet(password: string): Promise<void> {
     user.setPassword(password);
@@ -121,7 +117,6 @@ describe("User Entity", () => {
     user.removeFavoriteCharacter(characterId);
   }
 
-  // Then functions
   function thenUserHasValidProperties(): void {
     expect(user.email).toBe("test@example.com");
     expect(user.name).toBe("Test User");

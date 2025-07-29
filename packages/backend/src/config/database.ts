@@ -22,7 +22,7 @@ export const initializeDatabase = async (): Promise<void> => {
   } catch (error) {
     console.error("Database connection failed:", error);
     console.log("Starting in development mode without database...");
-    // Don't throw error in development mode
+
     if (process.env["NODE_ENV"] === "production") {
       throw error;
     }

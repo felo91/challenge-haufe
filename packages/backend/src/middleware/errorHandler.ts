@@ -16,7 +16,6 @@ export const errorHandler = (error: Error | AppError, req: Request, res: Respons
   let message = "Internal server error";
   let details: any = undefined;
 
-  // Handle our custom AppError instances
   if (error instanceof AppError) {
     statusCode = error.statusCode;
     message = error.message;
@@ -27,7 +26,6 @@ export const errorHandler = (error: Error | AppError, req: Request, res: Respons
     }
   }
 
-  // Log the error
   if (statusCode >= 500) {
     logger.error(
       {
@@ -54,7 +52,6 @@ export const errorHandler = (error: Error | AppError, req: Request, res: Respons
     );
   }
 
-  // Create error response
   const errorResponse: ErrorResponse = {
     error: message,
     statusCode,
@@ -63,16 +60,11 @@ export const errorHandler = (error: Error | AppError, req: Request, res: Respons
     method: req.method,
   };
 
-  // Add details if available
-  if (details) {
-    errorResponse.details = details;
-  }
+  if (details) errorResponse.details = details;
 
-  // Send error response
   res.status(statusCode).json(errorResponse);
 };
 
-// Async error wrapper to catch async errors
 export const asyncErrorHandler = (fn: Function) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);

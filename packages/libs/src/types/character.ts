@@ -22,7 +22,6 @@ export const CharacterSchema = z.object({
 });
 export type Character = z.infer<typeof CharacterSchema>;
 
-// Basic character information for regular users
 export const CharacterBasicInformationSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -34,7 +33,6 @@ export const CharacterBasicInformationSchema = z.object({
 });
 export type CharacterBasicInformation = z.infer<typeof CharacterBasicInformationSchema>;
 
-// Full character information for product owners
 export const CharacterInformationSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -68,7 +66,6 @@ export const CharacterListResponseSchema = z.object({
 });
 export type CharacterListResponse = z.infer<typeof CharacterListResponseSchema>;
 
-// Basic character list response for regular users
 export const CharacterBasicListResponseSchema = z.object({
   info: z.object({
     count: z.number(),

@@ -3,7 +3,6 @@ import { z } from "zod";
 export const UserRoleSchema = z.enum(["fan", "product_owner"]);
 export type UserRole = z.infer<typeof UserRoleSchema>;
 
-// Create an enum object for database usage
 export const UserRoleEnum = {
   FAN: "fan" as const,
   PRODUCT_OWNER: "product_owner" as const,
